@@ -23,7 +23,7 @@ setup(
     description='Plugin for testing CTData datasets',
     long_description=read('README.rst'),
     py_modules=['pytest_ctdata_datatest'],
-    install_requires=['pytest>=2.9.2'],
+    install_requires=['pytest>=2.9.2', 'pyyaml>=3.12'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Pytest',
