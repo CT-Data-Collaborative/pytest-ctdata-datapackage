@@ -34,9 +34,9 @@ def get_yaml_files():
                 yield os.path.join(dirpath, filename)
 
 @pytest.fixture
-def metadata():
-    yamls = list(get_yaml_files())
-    with open(yamls[0], 'r') as stream:
+def metadata(request):
+    yamlfile = getattr(request.module, "METADATA_FILE")
+    with open(yamlfile, 'r') as stream:
         metadata = yaml.load(stream)
         return metadata
 
