@@ -39,6 +39,12 @@ You can install "pytest-ctdata_datatest" via `pip`_ from `PyPI`_::
 Usage
 -----
 
+The main role of this plugin is to load and structure a CTData CKAN dataset for value testing and structure testing.
+
+In you primary testing file set `METADATA_FILE` to be the path to the dataset YAML file. This will allow the plugin to load, parse and run some initial tests on both the YAML file and the dataset itself.
+
+A number of additional fixtures are available that can be used to set up additional tests.
+
 * TODO
 
 Contributing
