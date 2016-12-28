@@ -5,7 +5,7 @@ pytest-ctdata_datatest
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
     :alt: See Build Status on Travis CI
 
-Plugin for testing `Tidy data` with accompanying YAML-based metadata file
+Plugin for testing `Tidy data`_ with accompanying YAML-based metadata file
 
 ----
 
@@ -43,7 +43,23 @@ will load, parse and set up a number of fixtures that can be used to run basic a
 
 Provided fixtures include:
 
-* metadata::dict representing the parsed YAML file
+* metadata - a dict representing the parsed YAML file
+* spotchecks - a list of lookup keys and expected value
+* dataset - a list of dicts representing the parsed tidy data file
+* geographies - a list of geographical entities present in data
+* domain - a boolean representing check that dataset domain is valid
+* years - a list of the years as specified in the metadata
+
+Roadmap
+-------
+
+Fixtures to add:
+
+* subdomain - a boolean representing check that dataset subdomain is a valid value
+* domain_subdomain - a boolean representing check that domain/subdomain combination is a valid value
+* units - a list of expected measurement types
+* default - a dict of the expected default settings for CKAN
+* variables - a list of expected variables in dataset - will need to specify disaggregation relationship
 
 Contributing
 ------------

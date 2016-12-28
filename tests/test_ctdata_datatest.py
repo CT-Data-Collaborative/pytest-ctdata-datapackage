@@ -51,8 +51,8 @@ def test_geography_extraction(testdir):
         METADATA_FILE='test.yml'
 
 
-        def test_metadata_geography(geography):
-            assert geography == 'Town'
+        def test_metadata_geography(_geography):
+            assert _geography == 'Town'
     """)
 
     result = testdir.runpytest(

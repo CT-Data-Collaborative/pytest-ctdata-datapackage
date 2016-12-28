@@ -30,7 +30,7 @@ def metadata(request):
         return metadata
 
 @pytest.fixture
-def expected_years(metadata):
+def years(metadata):
     """Extract years from metadata and convert to list"""
     try:
         return [x for x in metadata['Dataset']['Years in Catalog'][0].split(';')]
@@ -57,7 +57,7 @@ def dataset(request):
 
 
 @pytest.fixture
-def geography(metadata):
+def _geography(metadata):
     try:
         return metadata['Dataset']['Geography']
     except KeyError:
@@ -65,8 +65,8 @@ def geography(metadata):
 
 
 @pytest.fixture
-def geographies(data, geography):
-    return {x[geography] for x in data}
+def geographies(data, _geography):
+    return {x[_geography] for x in data}
 
 
 @pytest.fixture
