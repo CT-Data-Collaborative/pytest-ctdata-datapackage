@@ -2,7 +2,7 @@ pytest-ctdata_datatest
 ===================================
 
 .. image:: https://travis-ci.org/scuerda/pytest-ctdata_datatest.svg?branch=master
-    :target: https://travis-ci.org/scuerda/pytest-ctdata_datatest
+    :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata_datatest
     :alt: See Build Status on Travis CI
 
 .. image:: https://ci.appveyor.com/api/projects/status/github/scuerda/pytest-ctdata_datatest?branch=master
