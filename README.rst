@@ -5,7 +5,7 @@ pytest-ctdata_datatest
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
     :alt: See Build Status on Travis CI
 
-Plugin for testing CTData datasets
+Plugin for testing `Tidy data` with accompanying YAML-based metadata file
 
 ----
 
@@ -15,13 +15,14 @@ This `Pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`
 Features
 --------
 
-* TODO
+- Leverage YAML file to setup a series of fixtures for easy testing of `Tidy data`_
 
 
 Requirements
 ------------
 
-* TODO
+* Tidy-formatted data stored as a .csv
+* YAML-based metadata file
 
 
 Installation
@@ -35,13 +36,14 @@ You can install "pytest-ctdata_datatest" via `pip`_ from `PyPI`_::
 Usage
 -----
 
-The main role of this plugin is to load and structure a CTData CKAN dataset for value testing and structure testing.
+This plugin loads and structures a CTData CKAN dataset for value testing and structure testing.
 
-In you primary testing file set `METADATA_FILE` to be the path to the dataset YAML file. This will allow the plugin to load, parse and run some initial tests on both the YAML file and the dataset itself.
+In either your test file or your conftest file, set `METADATA_FILE` to be the path to the dataset YAML file. The plugin
+will load, parse and set up a number of fixtures that can be used to run basic and more complex tests.
 
-A number of additional fixtures are available that can be used to set up additional tests.
+Provided fixtures include:
 
-* TODO
+* metadata::dict representing the parsed YAML file
 
 Contributing
 ------------
@@ -71,3 +73,4 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`tox`: https://tox.readthedocs.io/en/latest/
 .. _`pip`: https://pypi.python.org/pypi/pip/
 .. _`PyPI`: https://pypi.python.org/pypi
+.. _`Tidy data`: http://vita.had.co.nz/papers/tidy-data.pdf
