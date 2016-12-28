@@ -1,7 +1,7 @@
 pytest-ctdata_datatest
 ===================================
 
-.. image:: https://travis-ci.org/scuerda/pytest-ctdata_datatest.svg?branch=master
+.. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata_datatest.svg?branch=master
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata_datatest
     :alt: See Build Status on Travis CI
 
