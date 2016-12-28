@@ -5,10 +5,6 @@ pytest-ctdata_datatest
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
     :alt: See Build Status on Travis CI
 
-.. image:: https://ci.appveyor.com/api/projects/status/github/scuerda/pytest-ctdata_datatest?branch=master
-    :target: https://ci.appveyor.com/project/scuerda/pytest-ctdata_datatest/branch/master
-    :alt: See Build Status on AppVeyor
-
 Plugin for testing CTData datasets
 
 ----
