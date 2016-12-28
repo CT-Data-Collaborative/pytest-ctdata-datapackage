@@ -11,12 +11,8 @@ def test_yaml_parse(testdir):
         ---
         Dataset:
             Name: Children by Family Type
-            Description: Children by Family Type reports the number
-            and percent of children living in families by child age
-            and by family type.
-            Full Description: Children by Family Type reports the number
-            and percent of children living in families by child age
-            and by family type.
+            Description: Children by Family Type reports the number and percent of children living in families by child age and by family type.
+            Full Description: Children by Family Type reports the number and percent of children living in families by child age and by family type.
             Source: American Community Survey
         ...
     """)
@@ -24,15 +20,15 @@ def test_yaml_parse(testdir):
     testdir.makepyfile("""
         METADATA_FILE='test.yml'
 
-        def test_one(metadata):
-            assert metadata['Dataset']['Name'] == 'Chilren by Family Type'
+        def test_metadata_fixture(metadata):
+            assert metadata['Dataset']['Name'] == 'Children by Family Type'
     """)
 
     result = testdir.runpytest(
         '-v'
     )
     result.stdout.fnmatch_lines([
-        '*::test_sth PASSED',
+        '*::test_metadata_fixture PASSED',
     ])
 
     assert result.ret == 0
