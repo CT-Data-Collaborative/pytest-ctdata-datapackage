@@ -1,5 +1,5 @@
 pytest-ctdata_datatest
-===================================
+======================
 
 .. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest.svg?branch=master
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
@@ -49,6 +49,74 @@ Provided fixtures include:
 * geographies - a list of geographical entities present in data
 * domain - a boolean representing check that dataset domain is valid
 * years - a list of the years as specified in the metadata
+
+
+Metadata Schema
+---------------
+
+Testing row counts and the success / failure of backfilling and subgroup calculations requires knowing the relationship
+between factors and the degree to which factors are nested or in parallel.
+
+For example, let's imagine that there is a data set where observations include information about Sex and Race/Ethnicity.
+There are two common scenarios. These variables could either represent a hierarchy of disaggregation or represent
+parallel disaggregations.
+
+Let's say that the Sex factor includes the following levels
+
+- Male
+- Female
+- All
+
+And the Race/Ethnicity factor includes the following levels
+
+- White
+- Black
+- Hispanic
+- All
+
+If these are nested each observation where sex is indicated to be 'Male' will have a corresponding Race/Ethnicity level
+that can be one of the three choices. This results in twelve possible combinations
+
+- Male/White
+- Female/White
+- All/White
+- Male/Black
+and so on until
+- All/All
+
+As an alternative, these factors could be parallel, in which case a given observation can either include information
+about sex OR information about Race/Ethnicity. The combinations can
+
+- Male/All
+- Female/All
+- All/All
+- All/White
+- All/Black
+- All/Hispanic
+
+Sometimes the situation is more complex. Some factors can be hierarchical, while others can be parallel. This is often
+the case with education data. For example, data may be disaggregated by Sex and Race/Ethnicity with a separate
+disaggregation by grade.
+
+We can generalize this specification as follows in the YAML file.
+
+First, we include a specification of each factor and the available levels.
+
+Second, we can include a list of the valid combinations.
+
+For example one (Sex and Race/Ethnicity nested), we would specify as follows:
+
+- [Sex, Race/Ethnicity]
+
+For the second example (Sex and Race/Ethnicity in parallel), we would specify as follows:
+
+- Sex
+- Race/Ethnicity
+
+For the third, (Sex and Race/Ethnicity nested, Grade in parallel):
+
+- [Sex, Race/Ethnicity]
+- Grade
 
 Roadmap
 -------

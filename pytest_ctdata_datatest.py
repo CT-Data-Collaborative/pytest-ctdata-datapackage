@@ -47,6 +47,7 @@ def spotchecks(metadata):
 
 @pytest.fixture
 def dataset(request):
+    """Load dataset"""
     try:
         datafile = getattr(request.module, 'TARGET_FILE')
     except AttributeError:
@@ -58,6 +59,7 @@ def dataset(request):
 
 @pytest.fixture
 def _geography(metadata):
+    """Extract specified geography from metadata YAML"""
     try:
         return metadata['Dataset']['Geography']
     except KeyError:
@@ -66,6 +68,7 @@ def _geography(metadata):
 
 @pytest.fixture
 def geographies(data, _geography):
+    """Use metadata file to extract a set of unique towns from data file"""
     return {x[_geography] for x in data}
 
 
