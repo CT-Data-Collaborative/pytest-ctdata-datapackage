@@ -5,6 +5,7 @@ import csv
 from collections import defaultdict
 import yaml
 import os
+import itertools
 
 CTDATA_DATASET_DOMAINS = ['Civic Vitality', 'Demographics', 'Economy', 'Education', 'Health', 'Housing', 'Safety']
 
@@ -75,3 +76,19 @@ def geographies(data, _geography):
 @pytest.fixture
 def domain(metadata):
     return metadata['Dataset']['Domain'] in CTDATA_DATASET_DOMAINS
+
+@pytest.fixture
+def dimension_group_list(metadata):
+    return metadata['Dataset']['Dimension Groups']
+
+@pytest.fixture
+def dimensions(metadata):
+    return metadata['Dataset']['Dimensions']
+
+@pytest.fixture
+def dimension_combinations(dimension_group_list, dimensions):
+    list_of_combinations = []
+    for combination in dimension_group_list:
+        combos = list(itertools.product(*[dimensions[i] for i in combination]))
+        list_of_combinations.append(combos)
+    return list_of_combinations
