@@ -1,4 +1,5 @@
 import pytest
+
 pytest_plugins = 'pytester'
 
 
@@ -96,6 +97,26 @@ def datapackage(testdir):
             "dimension_groups": [
                 ["English Language Learner", "Grade"],
                 ["Students with Disabilities"]
-            ]
+            ],
+            "spot_checks": [
+                {
+                  "Town": "Ansonia",
+                  "Year": "2016",
+                  "Grade": "K through 3",
+                  "English Language Learner": "English Language Learner",
+                  "Students with Disabilities": "All",
+                  "Measure Type": "Number",
+                  "Value": 10
+                },
+                {
+                  "Town": "Andover",
+                  "Year": "2015",
+                  "Grade": "All",
+                  "English Language Learner": "All",
+                  "Students with Disabilities": "With disabilities",
+                  "Measure Type": "Number",
+                  "Value": 1
+                }
+              ]
         }
     """)
