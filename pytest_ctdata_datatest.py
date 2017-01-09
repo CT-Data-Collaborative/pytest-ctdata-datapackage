@@ -3,46 +3,35 @@
 import pytest
 import csv
 from collections import defaultdict
-import yaml
-import os
 import itertools
+import json
 
 CTDATA_DATASET_DOMAINS = ['Civic Vitality', 'Demographics', 'Economy', 'Education', 'Health', 'Housing', 'Safety']
 
 def nested_dict():
    return defaultdict(nested_dict)
 
-def get_yaml_files():
-    for(dirpath, _, filenames) in os.walk('.'):
-        for filename in filenames:
-            f,e = os.path.splitext(filename)
-            if e == 'yml':
-                yield os.path.join(dirpath, filename)
-
 @pytest.fixture
 def metadata(request):
-    """Load the specified metadata yaml file and parse"""
-    try:
-        yamlfile = getattr(request.module, "METADATA_FILE")
-    except AttributeError:
-        return dict()
-    with open(yamlfile, 'r') as stream:
-        metadata = yaml.load(stream)
+    """Load and parse the datapackage.json"""
+    with open('datapackage.json', 'r') as stream:
+        metadata = json.load(stream)
         return metadata
 
 @pytest.fixture
 def years(metadata):
     """Extract years from metadata and convert to list"""
     try:
-        return [x for x in metadata['Dataset']['Years in Catalog'][0].split(';')]
+        return metadata['ckan_extras']['years_in_catalog']['value']
     except KeyError:
         return []
 
 
+# TODO Write test for pulling spot checks
 @pytest.fixture
 def spotchecks(metadata):
     try:
-        [(v[0], v[1], v[2], float(v[3])) for k, v in metadata['Dataset']['Spot Checks'].items()]
+        [(v[0], v[1], v[2], float(v[3])) for k, v in metadata['Spot Checks'].items()]
     except KeyError:
         return []
 
@@ -60,9 +49,9 @@ def dataset(request):
 
 @pytest.fixture
 def _geography(metadata):
-    """Extract specified geography from metadata YAML"""
+    """Extract specified geography from datapackage.json"""
     try:
-        return metadata['Dataset']['Geography']
+        return metadata['ckan_extras']['geography']['value']
     except KeyError:
         return ''
 
@@ -75,20 +64,24 @@ def geographies(data, _geography):
 
 @pytest.fixture
 def domain(metadata):
-    return metadata['Dataset']['Domain'] in CTDATA_DATASET_DOMAINS
+    return metadata['ckan_extras']['domain']['value'] in CTDATA_DATASET_DOMAINS
 
 @pytest.fixture
 def dimension_group_list(metadata):
-    return metadata['Dataset']['Dimension Groups']
+    return metadata['dimension_groups']
 
 @pytest.fixture
 def dimensions(metadata):
-    return metadata['Dataset']['Dimensions']
+    return metadata['resources'][0]['schema']['fields']
 
 @pytest.fixture
 def dimension_combinations(dimension_group_list, dimensions):
     list_of_combinations = []
+    dimension_lookup = {d['name']: d for d in dimensions}
+    flat_dimensions = [item for sublist in dimension_group_list for item in sublist]
+    possible_dimension_values = {d: dimension_lookup[d]['constraints']['enum'] for d in flat_dimensions}
+
     for combination in dimension_group_list:
-        combos = list(itertools.product(*[dimensions[i] for i in combination]))
+        combos = list(itertools.product(*[possible_dimension_values[i] for i in combination]))
         list_of_combinations.append(combos)
     return list_of_combinations
