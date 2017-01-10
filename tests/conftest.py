@@ -2,6 +2,13 @@ import pytest
 
 pytest_plugins = 'pytester'
 
+@pytest.fixture
+def datafile(testdir):
+    testdir.makefile('.csv', data="""
+    Town,FIPS,Year,Grade,English Language Learner,Students with Disabilities,Measure Type,Variable,Value
+    Ansonia,"0901",2016,K through 3,English Language Learner,All,Number,Students,10
+    Andover,"0902",2015,All,All,With disabilities,Number,Students,1
+    """)
 
 @pytest.fixture
 def datapackage(testdir):
@@ -15,7 +22,7 @@ def datapackage(testdir):
                 "web": ""
             }],
             "resources": [{
-                "path": "data/data.csv",
+                "path": "data.csv",
                 "format": "csv",
                 "schema": {
                     "fields": [{

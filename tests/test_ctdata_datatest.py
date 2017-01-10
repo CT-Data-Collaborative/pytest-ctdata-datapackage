@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+def helper_filter(item, conditions):
+    for k,v in conditions:
+        if item[k] != v:
+            return False
+    return True
+
 def test_datapackagejson_parse(testdir, datapackage):
     """Test loading of datapackage json file"""
 
@@ -103,6 +109,72 @@ def test_dimension_permutations(testdir, datapackage):
     )
     result.stdout.fnmatch_lines([
         '*::test_dimension_permutations PASSED',
+    ])
+
+    assert result.ret == 0
+
+
+def test_spotcheck_fixture(testdir, datapackage):
+    """Test extraction of spotchecks from datapackage"""
+
+
+    testdir.makepyfile("""
+        def test_spotcheck_fixture(spotchecks):
+            assert len(spotchecks) == 2
+    """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_spotcheck_fixture PASSED',
+    ])
+
+    assert result.ret == 0
+
+def test_datafile_load(testdir, datapackage, datafile):
+
+    testdir.makepyfile("""
+            def test_datafile_load(dataset):
+                assert len(dataset) == 2
+        """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_datafile_load PASSED',
+    ])
+
+    assert result.ret == 0
+
+
+def test_spotcheck_lookups(testdir, datapackage, datafile):
+
+    testdir.makepyfile("""
+            import pytest
+
+            def helper_filter(item, conditions):
+                for k,v in conditions:
+                    if item[k] != v:
+                        return False
+                return True
+
+            def test_spotcheck_testing(spotchecks, dataset):
+                for check in spotchecks:
+                    v = check['Value']
+                    filters = [(k,v) for k,v in check.items() if k != 'Value']
+                    matches = list(filter(lambda x: helper_filter(x, filters), dataset))
+                    match = matches[0]
+                    assert len(matches) == 1
+                    assert match['Value'] == str(v)
+       """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_spotcheck_testing PASSED',
     ])
 
     assert result.ret == 0

@@ -30,18 +30,12 @@ def years(metadata):
 # TODO Write test for pulling spot checks
 @pytest.fixture
 def spotchecks(metadata):
-    try:
-        [(v[0], v[1], v[2], float(v[3])) for k, v in metadata['Spot Checks'].items()]
-    except KeyError:
-        return []
+    return metadata['spot_checks']
 
 @pytest.fixture
-def dataset(request):
+def dataset(metadata):
     """Load dataset"""
-    try:
-        datafile = getattr(request.module, 'TARGET_FILE')
-    except AttributeError:
-        return []
+    datafile = metadata['resources'][0]['path']
     with open(datafile, 'r') as file:
         reader = csv.DictReader(file)
         return [x for x in reader]
