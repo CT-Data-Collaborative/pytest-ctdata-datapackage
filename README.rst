@@ -1,11 +1,11 @@
-pytest-ctdata_datatest
+pytest-ctdata-datatest
 ======================
 
 .. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest.svg?branch=master
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
     :alt: See Build Status on Travis CI
 
-Plugin for testing `Tidy data`_ with accompanying YAML-based metadata file
+Plugin for testing `Tabular Data Packages`_ with `Tidy data`_ resources.
 
 ----
 
@@ -15,35 +15,36 @@ This `Pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`
 Features
 --------
 
-- Leverage YAML file to setup a series of fixtures for easy testing of `Tidy data`_
+- Leverage `datapackage.json`_ file and `JSON Schema`_ to setup a series of fixtures for easy testing of `Tidy data`_
 
 
 Requirements
 ------------
 
 * Tidy-formatted data stored as a .csv
-* YAML-based metadata file
+* Datapackage.json
 
 
 Installation
 ------------
 
-You can install "pytest-ctdata_datatest" via `pip`_ from `PyPI`_::
+You can install "pytest-ctdata-datatest" via `pip`_ from `Github`_::
 
-    $ pip install pytest-ctdata_datatest
+    $ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datatest#egg=pytest-ctdata-datatest
 
 
 Usage
 -----
 
-This plugin loads and structures a CTData CKAN dataset for value testing and structure testing.
+This plugin loads and structures a CTData CKAN dataset for value and structure testing. It is designed to be used
+alongside `CTData Dataset Cookiecutter`_
 
 In either your test file or your conftest file, set `METADATA_FILE` to be the path to the dataset YAML file. The plugin
 will load, parse and set up a number of fixtures that can be used to run basic and more complex tests.
 
 Provided fixtures include:
 
-* metadata - a dict representing the parsed YAML file
+* metadata - a dict representing the parsed datapackage.json file
 * spotchecks - a list of lookup keys and expected value
 * dataset - a list of dicts representing the parsed tidy data file
 * geographies - a list of geographical entities present in data
@@ -158,3 +159,7 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`pip`: https://pypi.python.org/pypi/pip/
 .. _`PyPI`: https://pypi.python.org/pypi
 .. _`Tidy data`: http://vita.had.co.nz/papers/tidy-data.pdf
+.. _`CTData Dataset Cookiecutter`: https://github.com/CT-Data-Collaborative/ctdata-dataset-cookiecutter
+.. _`Tabular Data Packages`: http://frictionlessdata.io/guides/tabular-data-package/
+.. _`datapackage.json`: http://frictionlessdata.io/guides/data-package/#datapackagejson
+.. _`Github`: https://github.com
