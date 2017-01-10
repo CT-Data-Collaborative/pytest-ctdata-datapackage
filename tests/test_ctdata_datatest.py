@@ -162,13 +162,12 @@ def test_spotcheck_lookups(testdir, datapackage, datafile):
 
             def test_spotcheck_testing(spotchecks, dataset):
                 for check in spotchecks:
-                    v = check['Value']
+                    check_val = check['Value']
                     filters = [(k,v) for k,v in check.items() if k != 'Value']
                     matches = [x for x in dataset if helper_filter(x, filters)]
-                    # matches = list(filter(lambda x: helper_filter(x, filters), dataset))
                     match = matches[0]
                     assert len(matches) == 1
-                    assert match['Value'] == str(v)
+                    assert match['Value'] == str(check_val)
        """)
 
     result = testdir.runpytest(
