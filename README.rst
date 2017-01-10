@@ -1,5 +1,5 @@
-pytest-ctdata-datatest
-======================
+pytest-ctdata-datapackage
+=========================
 
 .. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest.svg?branch=master
     :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
@@ -15,7 +15,8 @@ This `Pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`
 Features
 --------
 
-- Leverage `datapackage.json`_ file and `JSON Schema`_ to setup a series of fixtures for easy testing of `Tidy data`_
+- Leverage `datapackage.json`_ file and `JSON Table Schema`_ to setup a series of fixtures for easy testing of `Tidy
+data`_
 
 
 Requirements
@@ -28,9 +29,9 @@ Requirements
 Installation
 ------------
 
-You can install "pytest-ctdata-datatest" via `pip`_ from `Github`_::
+You can install "pytest-ctdata-datapackage" via `pip`_ from `Github`_::
 
-    $ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datatest#egg=pytest-ctdata-datatest
+    $ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datatest#egg=pytest-ctdata-datapackage
 
 
 Usage
@@ -163,3 +164,4 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`Tabular Data Packages`: http://frictionlessdata.io/guides/tabular-data-package/
 .. _`datapackage.json`: http://frictionlessdata.io/guides/data-package/#datapackagejson
 .. _`Github`: https://github.com
+.. _`JSON Table Schema`: http://frictionlessdata.io/guides/json-table-schema/
