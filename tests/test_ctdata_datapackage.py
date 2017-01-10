@@ -178,3 +178,35 @@ def test_spotcheck_lookups(testdir, datapackage, datafile):
     ])
 
     assert result.ret == 0
+
+
+def test_geoes_are_valid_towns(testdir, datapackage, datafile):
+
+    testdir.makepyfile("""
+                import pytest
+                import datapackage
+
+                def helper_filter(item, conditions):
+                    for k,v in conditions:
+                        if item[k] != v:
+                            return False
+                    return True
+
+                @pytest.fixture
+                def towns():
+                    dp = datapackage.DataPackage(
+                        'https://raw.githubusercontent.com/CT-Data-Collaborative/ct-town-list/master/datapackage.json')
+                    return dp.resources[0].data
+
+                def test_geoes_are_valid_towns(towns, geographies):
+                    assert set(geographies) < set([x['Town'] for x in towns])
+           """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_geoes_are_valid_towns PASSED',
+    ])
+
+    assert result.ret == 0

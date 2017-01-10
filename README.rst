@@ -1,8 +1,8 @@
 pytest-ctdata-datapackage
 =========================
 
-.. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest.svg?branch=master
-    :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datatest
+.. image:: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datapackage.svg?branch=master
+    :target: https://travis-ci.org/CT-Data-Collaborative/pytest-ctdata-datapackage
     :alt: See Build Status on Travis CI
 
 Plugin for testing `Tabular Data Packages`_ with `Tidy data`_ resources.
@@ -15,8 +15,7 @@ This `Pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`
 Features
 --------
 
-- Leverage `datapackage.json`_ file and `JSON Table Schema`_ to setup a series of fixtures for easy testing of `Tidy
-data`_
+- Leverage `datapackage.json`_ and `JSON Table Schema`_ to setup a series of fixtures for easy testing of`Tidy data`_
 
 
 Requirements
@@ -31,23 +30,47 @@ Installation
 
 You can install "pytest-ctdata-datapackage" via `pip`_ from `Github`_::
 
-    $ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datatest#egg=pytest-ctdata-datapackage
+:bash:`$ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datapackage#egg=pytest-ctdata
+-datapackage`
 
 
 Usage
 -----
 
 This plugin loads and structures a CTData CKAN dataset for value and structure testing. It is designed to be used
-alongside `CTData Dataset Cookiecutter`_
+alongside `CTData Dataset Cookiecutter`_.
 
-In either your test file or your conftest file, set `METADATA_FILE` to be the path to the dataset YAML file. The plugin
-will load, parse and set up a number of fixtures that can be used to run basic and more complex tests.
+The plugin makes a few assumptions about the structure and organization of your data. It assumes that the root of
+your directory will contain a :code:`datapackage.json` and the presence of only one resource file. This is more
+strict that the requirements imposed by the Tabular Data Package standards and stems from how we publish and display
+data.
+
+Using the :code:`datapackage.json`, the plugin will set up a number of fixtures that can then be used to run some
+basic tests against the final data set. Our cookiecutter plugin contains a testing file that includes a number of
+standard tests.
+
+Most data published by CTData is associated with a limited set of geographies. Specifically:
+
+* Town/City
+* School District
+* County
+
+When we publish data, we follow a number of conventions that impact data set testing.
+
+1. All geographic entities are represented in the raw data file, even if no data is available. We consider the
+absence of data to be a meaningful data point itself and so we back fill our data files to communicate this. We
+usually indicate the absence of data by setting the :code:`Value` field to be :code:`-9999`.
+
+2. All combinations of variables should be present. This follows, from #1, in that if we choose to present a given
+disaggregation that is not uniformally available, we will communicate this by setting the :code:`Value` field to be
+:code:`-9999`.
+
 
 Provided fixtures include:
 
 * metadata - a dict representing the parsed datapackage.json file
-* spotchecks - a list of lookup keys and expected value
 * dataset - a list of dicts representing the parsed tidy data file
+* spotchecks - a list of lookup keys and expected value
 * geographies - a list of geographical entities present in data
 * domain - a boolean representing check that dataset domain is valid
 * years - a list of the years as specified in the metadata
@@ -165,3 +188,6 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`datapackage.json`: http://frictionlessdata.io/guides/data-package/#datapackagejson
 .. _`Github`: https://github.com
 .. _`JSON Table Schema`: http://frictionlessdata.io/guides/json-table-schema/
+
+.. role:: bash(code)
+   :language: bash

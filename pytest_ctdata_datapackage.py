@@ -51,9 +51,9 @@ def _geography(metadata):
 
 
 @pytest.fixture
-def geographies(data, _geography):
+def geographies(dataset, _geography):
     """Use metadata file to extract a set of unique towns from data file"""
-    return {x[_geography] for x in data}
+    return {x[_geography] for x in dataset}
 
 
 @pytest.fixture
