@@ -144,7 +144,7 @@ def test_datafile_load(testdir, datapackage, datafile):
     assert result.ret == 0
 
 
-def test_spotcheck_lookups(testdir, datapackage, datafile):
+def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
 
     testdir.makepyfile("""
             import pytest
@@ -170,7 +170,7 @@ def test_spotcheck_lookups(testdir, datapackage, datafile):
     assert result.ret == 0
 
 
-def test_geoes_are_valid_towns(testdir, housing_datapacakge, housing_dataset):
+def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
 
     testdir.makepyfile("""
                 import pytest

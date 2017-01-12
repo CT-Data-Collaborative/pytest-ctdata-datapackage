@@ -145,7 +145,7 @@ def datapackage(testdir):
 
 
 @pytest.fixture
-def housing_datapacakge(testdir):
+def housing_datapackage(testdir):
     testdir.makefile('.json', datapackage="""
             {
             "name": "single-housing-units",
@@ -245,6 +245,60 @@ def housing_datapacakge(testdir):
                   "number type": "float",
                   "value": 59.2
                 }
+              },
+              {
+                "type": "$reduce",
+                "filter": [
+                    {
+                      "Town": "Hartford",
+                      "Year": "2011-2015",
+                      "Unit Type": "Detached",
+                      "Measure Type": "Number",
+                      "Variable": "Housing Units"
+                    },
+                    {
+                      "Town": "East Hartford",
+                      "Year": "2011-2015",
+                      "Unit Type": "Detached",
+                      "Measure Type": "Number",
+                      "Variable": "Housing Units"
+                    }],
+                "expected": {
+                  "type": "$match",
+                  "number type": "int",
+                  "value": 19107
+                }
+              },
+              {
+                "type": "$calculate",
+                "filter": {
+                    "numerator":
+                        {
+                          "Town": "Connecticut",
+                          "Year": "2011-2015",
+                          "Unit Type": "Detached",
+                          "Measure Type": "Number",
+                          "Variable": "Housing Units"
+                        },
+                    "denominator": {
+                          "Town": "Connecticut",
+                          "Year": "2011-2015",
+                          "Unit Type": "Total",
+                          "Measure Type": "Number",
+                          "Variable": "Housing Units"
+                    }
+                },
+                "expected": {
+                  "type": "$lookup",
+                  "number type": "percent",
+                  "value": {
+                    "Town": "Connecticut",
+                    "Year": "2011-2015",
+                    "Unit Type": "Detached",
+                    "Measure Type": "Percent",
+                    "Variable": "Housing Units"
+                  }
+                }
               }
             ]
         }
@@ -252,7 +306,7 @@ def housing_datapacakge(testdir):
 
 
 @pytest.fixture
-def housing_dataset(testdir):
+def housing_datafile(testdir):
     testdir.makefile('.csv', data="""
     Town,FIPS,Year,Unit Type,Measure Type,Variable,Value
     Connecticut,"09",2011-2015,Total,Number,Housing Units,1491786
