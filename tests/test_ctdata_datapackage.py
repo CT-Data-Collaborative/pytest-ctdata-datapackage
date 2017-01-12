@@ -90,7 +90,7 @@ def test_dimension_group_list_setup(testdir, datapackage):
     assert result.ret == 0
 
 
-def test_dimension_permutations(testdir, datapackage):
+def test_dimension_permutations_dataset_one(testdir, datapackage):
     """Confirm that pytest can correctly use fixture to load yaml"""
 
 
@@ -107,6 +107,25 @@ def test_dimension_permutations(testdir, datapackage):
     ])
 
     assert result.ret == 0
+
+def test_dimension_permutations_dataset_two(testdir, housing_datapackage):
+    """Confirm that pytest can correctly use fixture to load yaml"""
+
+
+    testdir.makepyfile("""
+        def test_dimension_permutations(dimension_combinations):
+            assert len(dimension_combinations[0]) == 6
+    """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_dimension_permutations PASSED',
+    ])
+
+    assert result.ret == 0
+
 
 
 def test_spotcheck_fixture(testdir, datapackage):
@@ -200,3 +219,16 @@ def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
     ])
 
     assert result.ret == 0
+
+
+dimension_group_list = [{
+        "Unit Type": ["Detached"],
+        "Measure Type": ["Number", "Percent"],
+        "Variable": ["Housing Units", "Margins of Error"]
+    },
+    {
+        "Unit Type": ["Total"],
+        "Measure Type": ["Number"],
+        "Variable": ["Housing Units", "Margins of Error"]
+    }
+    ]

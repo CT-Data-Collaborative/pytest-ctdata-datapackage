@@ -40,6 +40,13 @@ def _lookerupper(dataset, filter):
         return None
     return result
 
+def _lookup_wrapper(dataset, filter, convertor):
+    lookup = _lookerupper(dataset, filter)
+    try:
+        final_value = convertor(lookup)
+    except TypeError:
+        final_value = None
+    return final_value
 
 
 def nested_dict():
@@ -60,9 +67,6 @@ def years(metadata):
     except KeyError:
         return []
 
-@pytest.fixture
-def spotchecks(metadata):
-    return metadata['spot_checks']
 
 @pytest.fixture
 def dataset(metadata):
@@ -97,25 +101,34 @@ def dimension_group_list(metadata):
 def dimensions(metadata):
     return metadata['resources'][0]['schema']['fields']
 
-@pytest.fixture
-def dimension_combinations(dimension_group_list, dimensions):
-    list_of_combinations = []
-    dimension_lookup = {d['name']: d for d in dimensions}
-    flat_dimensions = [item for sublist in dimension_group_list for item in sublist]
-    possible_dimension_values = {d: dimension_lookup[d]['constraints']['enum'] for d in flat_dimensions}
+# @pytest.fixture
+# def dimension_combinations(dimension_group_list, dimensions):
+#     list_of_combinations = []
+#     dimension_lookup = {d['name']: d for d in dimensions}
+#     flat_dimensions = [item for sublist in dimension_group_list for item in sublist]
+#     possible_dimension_values = {d: dimension_lookup[d]['constraints']['enum'] for d in flat_dimensions}
+#
+#     for combination in dimension_group_list:
+#         combos = list(itertools.product(*[possible_dimension_values[i] for i in combination]))
+#         list_of_combinations.append(combos)
+#     return list_of_combinations
 
-    for combination in dimension_group_list:
-        combos = list(itertools.product(*[possible_dimension_values[i] for i in combination]))
-        list_of_combinations.append(combos)
+@pytest.fixture
+def dimension_combinations(dimension_group_list):
+    list_of_combinations = []
+    flat_dimensions = [[val for key,val in i.items()] for i in dimension_group_list]
+
+    for combination in flat_dimensions:
+        combos = itertools.product(*[i for i in combination])
+        for c in combos:
+            list_of_combinations.append(c)
     return list_of_combinations
 
-def lookup_wrapper(dataset, filter, convertor):
-    lookup = _lookerupper(dataset, filter)
-    try:
-        final_value = convertor(lookup)
-    except TypeError:
-        final_value = None
-    return final_value
+
+@pytest.fixture
+def spotchecks(metadata):
+    return metadata['spot_checks']
+
 
 @pytest.fixture
 def spotcheck_results(spotchecks, dataset):
@@ -128,19 +141,19 @@ def spotcheck_results(spotchecks, dataset):
         if check['expected']['type'] == '$match':
             expected_final_value = check['expected']['value']
         elif check['expected']['type'] == '$lookup':
-            expected_final_value = lookup_wrapper(dataset, check['expected']['value'], convertor)
+            expected_final_value = _lookup_wrapper(dataset, check['expected']['value'], convertor)
         else:
             expected_final_value = -1
 
         if check['type'] == "$lookup":
-            final_value = lookup_wrapper(dataset, check['filter'], convertor)
+            final_value = _lookup_wrapper(dataset, check['filter'], convertor)
         elif check['type'] == '$reduce':
-            final_value = sum([lookup_wrapper(dataset, f, convertor) for f in check['filter']])
+            final_value = sum([_lookup_wrapper(dataset, f, convertor) for f in check['filter']])
         elif check['type'] == '$percent':
             filter = check['filter']
             try:
-                numerator = lookup_wrapper(dataset, filter['numerator'], convertor)
-                denominator = lookup_wrapper(dataset, filter['denominator'], convertor)
+                numerator = _lookup_wrapper(dataset, filter['numerator'], convertor)
+                denominator = _lookup_wrapper(dataset, filter['denominator'], convertor)
             except KeyError:
                 final_value = None
             final_value = round(100*(numerator/denominator),1)

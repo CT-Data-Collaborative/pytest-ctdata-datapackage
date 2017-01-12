@@ -103,8 +103,13 @@ def datapackage(testdir):
                 }
             },
             "dimension_groups": [
-                ["English Language Learner", "Grade"],
-                ["Students with Disabilities"]
+                {
+                    "English Language Learner": ["English Language Learner", "All"],
+                    "Grade": ["K through 3", "4 through 8", "9 through 12", "All"]
+                },
+                {
+                    "Students with Disabilities": ["With disabilities", "All"]
+                }
             ],
             "spot_checks": [
               {
@@ -147,161 +152,186 @@ def datapackage(testdir):
 @pytest.fixture
 def housing_datapackage(testdir):
     testdir.makefile('.json', datapackage="""
-            {
-            "name": "single-housing-units",
-            "title": "Single Housing Units",
-            "description": "Single Housing Units reports the number and percent of housing units that are single, detached units.",
-            "sources": [{
-                "name": "US Census American Community Survey",
-                "web": ""
-            }],
-            "resources": [{
-                "path": "data.csv",
-                "format": "csv",
-                "schema": {
-                    "fields": [{
-                        "name": "Town",
+           {
+                "name": "single-housing-units",
+                "title": "Single Housing Units",
+                "description": "Single Housing Units reports the number and percent of housing units that are single, detached units.",
+                "sources": [{
+                    "name": "US Census American Community Survey",
+                    "web": ""
+                }],
+                "resources": [{
+                    "path": "data.csv",
+                    "format": "csv",
+                    "schema": {
+                        "fields": [{
+                            "name": "Town",
+                            "type": "string",
+                            "constraints": {
+                                "enum": ["Town", "County", "Town/County", "District", "Other"]
+                            },
+                            "dimension": false
+                        }, {
+                            "name": "FIPS",
+                            "type": "string",
+                            "dimension": false
+                        }, {
+                            "name": "Year",
+                            "type": "string",
+                            "dimension": false
+                        }, {
+                            "name": "Unit Type",
+                            "type": "string",
+                            "dimension": true,
+                            "constraints": {
+                                "enum": ["Total", "Detached"]
+                            }
+                        }, {
+                            "name": "Measure Type",
+                            "type": "string",
+                            "dimension": true,
+                            "constraints": {
+                                "enum": ["Number", "Percent"]
+                            }
+                        }, {
+                            "name": "Variable",
+                            "type": "string",
+                            "dimension": false,
+                            "constraints": {
+                                "enum": ["Housing Units", "Margins of Error"]
+                            }
+                        }, {
+                            "name": "Value",
+                            "type": "number",
+                            "dimension": false
+                        }]
+                    }
+                }],
+                "ckan_extras": {
+                    "full_description": {
+                        "ckan_name": "Full Description",
+                        "value": "Single Housing Units reports the number and percent of housing units that are single, detached units. A housing unit structure detached from any other house, that is, with open space on all four sides. Data is presented at the town, county, and state level. This data originates from the American Community Survey (ACS), table DP04.",
+                        "type": "string"
+                    },
+                    "geography": {
+                        "ckan_name": "Geography",
+                        "value": "Town",
                         "type": "string",
                         "constraints": {
                             "enum": ["Town", "County", "Town/County", "District", "Other"]
-                        },
-                        "dimension": false
-                    }, {
-                        "name": "FIPS",
-                        "type": "string",
-                        "dimension": false
-                    }, {
-                        "name": "Year",
-                        "type": "string",
-                        "dimension": false
-                    }, {
-                        "name": "Unit Type",
-                        "type": "string",
-                        "dimension": true,
-                        "constraints": {
-                            "enum": ["Total", "Detached"]
                         }
-                    }, {
-                        "name": "Measure Type",
-                        "type": "string",
-                        "dimension": true,
-                        "constraints": {
-                          "enum": ["Number", "Percent"]
-                        }
-                    }, {
-                        "name": "Variable",
-                        "type": "string",
-                        "dimension": false,
-                        "constraints": {
-                          "enum": ["Housing Units", "Margins of Error"]
-                        }
-                    }, {
-                        "name": "Value",
-                        "type": "number",
-                        "dimension": false
-                    }]
-                }
-            }],
-            "ckan_extras": {
-                "full_description": {
-                    "ckan_name": "Full Description",
-                    "value": "Single Housing Units reports the number and percent of housing units that are single, detached units. A housing unit structure detached from any other house, that is, with open space on all four sides. Data is presented at the town, county, and state level. This data originates from the American Community Survey (ACS), table DP04.",
-                    "type": "string"
-                },
-                "geography": {
-                    "ckan_name": "Geography",
-                    "value": "Town",
-                    "type": "string",
-                    "constraints": {
-                        "enum": ["Town", "County", "Town/County", "District", "Other"]
+                    },
+                    "domain": {
+                        "ckan_name": "Domain",
+                        "value": "Demographics",
+                        "type": "string"
+                    },
+                    "years_in_catalog": {
+                        "ckan_name": "Years in Catalog",
+                        "value": ["2011-2015", "2010-2014"],
+                        "type": "array"
                     }
                 },
-                "domain": {
-                    "ckan_name": "Domain",
-                    "value": "Demographics",
-                    "type": "string"
-                },
-                "years_in_catalog": {
-                    "ckan_name": "Years in Catalog",
-                    "value": ["2011-2015", "2010-2014"],
-                    "type": "array"
-                }
-            },
-            "dimension_groups": [
-                ["Unit Type", "Measure Type", "Variable"]
-            ],
-            "spot_checks": [
-              {
-                "type": "$lookup",
-                "filter": {
-                  "Town": "Connecticut",
-                  "Year": "2011-2015",
-                  "Unit Type": "Detached",
-                  "Measure Type": "Percent",
-                  "Variable": "Housing Units"
-                },
-                "expected": {
-                  "type": "$match",
-                  "number type": "float",
-                  "value": 59.2
-                }
-              },
-              {
-                "type": "$reduce",
-                "filter": [
+                "dimension_groups" : [
                     {
-                      "Town": "Hartford",
-                      "Year": "2011-2015",
-                      "Unit Type": "Detached",
-                      "Measure Type": "Number",
-                      "Variable": "Housing Units"
+                        "Unit Type": ["Detached"],
+                        "Measure Type": ["Number", "Percent"],
+                        "Variable": ["Housing Units", "Margins of Error"]
                     },
                     {
-                      "Town": "East Hartford",
-                      "Year": "2011-2015",
-                      "Unit Type": "Detached",
-                      "Measure Type": "Number",
-                      "Variable": "Housing Units"
-                    }],
-                "expected": {
-                  "type": "$match",
-                  "number type": "int",
-                  "value": 19107
-                }
-              },
-              {
-                "type": "$percent",
-                "filter": {
-                    "numerator":
-                        {
-                          "Town": "Connecticut",
-                          "Year": "2011-2015",
-                          "Unit Type": "Detached",
-                          "Measure Type": "Number",
-                          "Variable": "Housing Units"
-                        },
-                    "denominator": {
-                          "Town": "Connecticut",
-                          "Year": "2011-2015",
-                          "Unit Type": "Total",
-                          "Measure Type": "Number",
-                          "Variable": "Housing Units"
+                        "Unit Type": ["Total"],
+                        "Measure Type": ["Number"],
+                        "Variable": ["Housing Units", "Margins of Error"]
                     }
-                },
-                "expected": {
-                  "type": "$lookup",
-                  "number type": "float",
-                  "value": {
-                    "Town": "Connecticut",
-                    "Year": "2011-2015",
-                    "Unit Type": "Detached",
-                    "Measure Type": "Percent",
-                    "Variable": "Housing Units"
-                  }
-                }
-              }
-            ]
-        }
+                ],
+                "spot_checks": [{
+                    "type": "$lookup",
+                    "filter": {
+                        "Town": "Connecticut",
+                        "Year": "2011-2015",
+                        "Unit Type": "Detached",
+                        "Measure Type": "Percent",
+                        "Variable": "Housing Units"
+                    },
+                    "expected": {
+                        "type": "$match",
+                        "number type": "float",
+                        "value": 59.2
+                    }
+                }, {
+                    "type": "$reduce",
+                    "filter": [{
+                        "Town": "Hartford",
+                        "Year": "2011-2015",
+                        "Unit Type": "Detached",
+                        "Measure Type": "Number",
+                        "Variable": "Housing Units"
+                    }, {
+                        "Town": "East Hartford",
+                        "Year": "2011-2015",
+                        "Unit Type": "Detached",
+                        "Measure Type": "Number",
+                        "Variable": "Housing Units"
+                    }],
+                    "expected": {
+                        "type": "$match",
+                        "number type": "int",
+                        "value": 19107
+                    }
+                }, {
+                    "type": "$percent",
+                    "filter": {
+                        "numerator": {
+                            "Town": "Connecticut",
+                            "Year": "2011-2015",
+                            "Unit Type": "Detached",
+                            "Measure Type": "Number",
+                            "Variable": "Housing Units"
+                        },
+                        "denominator": {
+                            "Town": "Connecticut",
+                            "Year": "2011-2015",
+                            "Unit Type": "Total",
+                            "Measure Type": "Number",
+                            "Variable": "Housing Units"
+                        }
+                    },
+                    "expected": {
+                        "type": "$lookup",
+                        "number type": "float",
+                        "value": {
+                            "Town": "Connecticut",
+                            "Year": "2011-2015",
+                            "Unit Type": "Detached",
+                            "Measure Type": "Percent",
+                            "Variable": "Housing Units"
+                        }
+                    }
+                }, {
+                    "type": "$percent",
+                    "filter": {
+                        "numerator": {
+                            "Town": "Connecticut",
+                            "Year": "2011-2015",
+                            "Unit Type": "Detached",
+                            "Measure Type": "Number",
+                            "Variable": "Housing Units"
+                        },
+                        "denominator": {
+                            "Town": "Connecticut",
+                            "Year": "2011-2015",
+                            "Unit Type": "Total",
+                            "Measure Type": "Number",
+                            "Variable": "Housing Units"
+                        }
+                    },
+                    "expected": {
+                        "type": "$match",
+                        "number type": "float",
+                        "value": 59.2
+                    }
+                }]
+            }
     """)
 
 
