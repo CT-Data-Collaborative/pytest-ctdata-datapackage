@@ -10,6 +10,7 @@ def datafile(testdir):
     Andover,"0902",2015,All,All,With disabilities,Number,Students,1
     """)
 
+
 @pytest.fixture
 def datapackage(testdir):
     testdir.makefile('.json', datapackage="""
@@ -106,25 +107,39 @@ def datapackage(testdir):
                 ["Students with Disabilities"]
             ],
             "spot_checks": [
-                {
+              {
+                "type": "$lookup",
+                "filter": {
                   "Town": "Ansonia",
                   "Year": "2016",
                   "Grade": "K through 3",
                   "English Language Learner": "English Language Learner",
                   "Students with Disabilities": "All",
-                  "Measure Type": "Number",
-                  "Value": 10
+                  "Measure Type": "Number"
                 },
-                {
+                "expected": {
+                  "type": "$match",
+                  "number type": "int",
+                  "value": 10
+                }
+              },
+              {
+                "type": "$lookup",
+                "filter": {
                   "Town": "Andover",
                   "Year": "2015",
                   "Grade": "All",
                   "English Language Learner": "All",
                   "Students with Disabilities": "With disabilities",
-                  "Measure Type": "Number",
-                  "Value": 1
+                  "Measure Type": "Number"
+                },
+                "expected": {
+                  "type": "$match",
+                  "number type": "int",
+                  "value": 1
                 }
-              ]
+              }
+            ]
         }
     """)
 
@@ -216,29 +231,28 @@ def housing_datapacakge(testdir):
                 ["Unit Type", "Measure Type", "Variable"]
             ],
             "spot_checks": [
-                {
+              {
+                "type": "$lookup",
+                "filter": {
                   "Town": "Connecticut",
                   "Year": "2011-2015",
                   "Unit Type": "Detached",
                   "Measure Type": "Percent",
-                  "Variable": "Housing Units",
-                  "Value": 59.2
+                  "Variable": "Housing Units"
                 },
-                {
-                  "Town": "Monroe",
-                  "Year": "2011-2015",
-                  "Unit Type": "Detached",
-                  "Measure Type": "Number",
-                  "Variable": "Housing Units",
-                  "Value": 5974
+                "expected": {
+                  "type": "$match",
+                  "number type": "float",
+                  "value": 59.2
                 }
-              ]
+              }
+            ]
         }
     """)
 
 
 @pytest.fixture
-def housing_town_dataset(testdir):
+def housing_dataset(testdir):
     testdir.makefile('.csv', data="""
     Town,FIPS,Year,Unit Type,Measure Type,Variable,Value
     Connecticut,"09",2011-2015,Total,Number,Housing Units,1491786
@@ -2281,11 +2295,4 @@ def housing_town_dataset(testdir):
     Woodstock,"0901588190",2010-2014,Detached,Number,Margins of Error,208
     Woodstock,"0901588190",2010-2014,Detached,Percent,Housing Units,81.7
     Woodstock,"0901588190",2010-2014,Detached,Percent,Margins of Error,4.5
-    """)
-
-
-@pytest.fixture
-def housing_town_dataset(testdir):
-    testdir.makefile('.csv', data="""
-
     """)

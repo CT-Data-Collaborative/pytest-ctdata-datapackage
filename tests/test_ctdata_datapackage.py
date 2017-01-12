@@ -149,35 +149,35 @@ def test_datafile_load(testdir, datapackage, datafile):
     assert result.ret == 0
 
 
-def test_spotcheck_lookups(testdir, datapackage, datafile):
-
-    testdir.makepyfile("""
-            import pytest
-
-            def helper_filter(item, conditions):
-                for k,v in conditions:
-                    if item[k] != v:
-                        return False
-                return True
-
-            def test_spotcheck_testing(spotchecks, dataset):
-                for check in spotchecks:
-                    check_val = check['Value']
-                    filters = [(k,v) for k,v in check.items() if k != 'Value']
-                    matches = [x for x in dataset if helper_filter(x, filters)]
-                    match = matches[0]
-                    assert len(matches) == 1
-                    assert match['Value'] == str(check_val)
-       """)
-
-    result = testdir.runpytest(
-        '-v'
-    )
-    result.stdout.fnmatch_lines([
-        '*::test_spotcheck_testing PASSED',
-    ])
-
-    assert result.ret == 0
+# def test_spotcheck_lookups(testdir, datapackage, datafile):
+#
+#     testdir.makepyfile("""
+#             import pytest
+#
+#             def helper_filter(item, conditions):
+#                 for k,v in conditions:
+#                     if item[k] != v:
+#                         return False
+#                 return True
+#
+#             def test_spotcheck_testing(spotchecks, dataset):
+#                 for check in spotchecks:
+#                     check_val = check['Value']
+#                     filters = [(k,v) for k,v in check.items() if k != 'Value']
+#                     matches = [x for x in dataset if helper_filter(x, filters)]
+#                     match = matches[0]
+#                     assert len(matches) == 1
+#                     assert match['Value'] == str(check_val)
+#        """)
+#
+#     result = testdir.runpytest(
+#         '-v'
+#     )
+#     result.stdout.fnmatch_lines([
+#         '*::test_spotcheck_testing PASSED',
+#     ])
+#
+#     assert result.ret == 0
 
 
 def test_geoes_are_valid_towns(testdir, housing_datapacakge, housing_dataset):
