@@ -9,9 +9,11 @@ import pytest
 
 CTDATA_DATASET_DOMAINS = ['Civic Vitality', 'Demographics', 'Economy', 'Education', 'Health', 'Housing', 'Safety']
 
+
 SPOT_CHECK_CONVERTERS = {
     "float": float,
-    "int": int
+    "int": int,
+    "percent": lambda x: round(x*100,1)
 }
 
 Spotcheck = namedtuple("Spotcheck", ['spec', 'expected', 'actual'])
@@ -107,28 +109,44 @@ def dimension_combinations(dimension_group_list, dimensions):
         list_of_combinations.append(combos)
     return list_of_combinations
 
+def lookup_wrapper(dataset, filter, convertor):
+    lookup = _lookerupper(dataset, filter)
+    try:
+        final_value = convertor(lookup)
+    except TypeError:
+        final_value = None
+    return final_value
 
 @pytest.fixture
 def spotcheck_results(spotchecks, dataset):
     spotcheck_results = []
     for check in spotchecks:
-        if check['type'] == "$lookup":
-            lookup = _lookerupper(dataset, check['filter'])
+        final_value_type = check['expected']['number type']
+        convertor = SPOT_CHECK_CONVERTERS[final_value_type]
 
-            # Get the expected type for the final value fetch the proper coercion function
-            final_value_type = check['expected']['number type']
-            convertor = SPOT_CHECK_CONVERTERS[final_value_type]
-
-            try:
-                final_value = convertor(lookup)
-            except TypeError:
-                final_value = None
-
-            # Get the expected final value
+        # Handle parsing the expected value.
+        if check['expected']['type'] == '$match':
             expected_final_value = check['expected']['value']
-
-            check_result = Spotcheck(spec=check, expected=expected_final_value, actual=final_value)
-            spotcheck_results.append(check_result)
+        elif check['expected']['type'] == '$lookup':
+            expected_final_value = lookup_wrapper(dataset, check['expected']['value'], convertor)
         else:
-            pass
+            expected_final_value = -1
+
+        if check['type'] == "$lookup":
+            final_value = lookup_wrapper(dataset, check['filter'], convertor)
+        elif check['type'] == '$reduce':
+            final_value = sum([lookup_wrapper(dataset, f, convertor) for f in check['filter']])
+        elif check['type'] == '$percent':
+            filter = check['filter']
+            try:
+                numerator = lookup_wrapper(dataset, filter['numerator'], convertor)
+                denominator = lookup_wrapper(dataset, filter['denominator'], convertor)
+            except KeyError:
+                final_value = None
+            final_value = round(100*(numerator/denominator),1)
+        else:
+            final_value = None
+
+        check_result = Spotcheck(spec=check, expected=expected_final_value, actual=final_value)
+        spotcheck_results.append(check_result)
     return spotcheck_results
