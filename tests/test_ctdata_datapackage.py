@@ -180,7 +180,7 @@ def test_spotcheck_lookups(testdir, datapackage, datafile):
     assert result.ret == 0
 
 
-def test_geoes_are_valid_towns(testdir, datapackage, datafile):
+def test_geoes_are_valid_towns(testdir, housing_datapacakge, housing_dataset):
 
     testdir.makepyfile("""
                 import pytest
@@ -199,7 +199,7 @@ def test_geoes_are_valid_towns(testdir, datapackage, datafile):
                     return dp.resources[0].data
 
                 def test_geoes_are_valid_towns(towns, geographies):
-                    assert set(geographies) < set([x['Town'] for x in towns])
+                    assert set(geographies) == set([x['Town'] for x in towns])
            """)
 
     result = testdir.runpytest(

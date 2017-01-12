@@ -70,3 +70,5 @@ target/
 .ropeproject
 
 .idea
+
+.DS_Store
