@@ -7,7 +7,7 @@ from collections import defaultdict
 
 import pytest
 
-import spotchecker.helpers as spotchecker
+from spotchecker import helpers as spotchecker
 
 CTDATA_DATASET_DOMAINS = ['Civic Vitality', 'Demographics', 'Economy', 'Education', 'Health', 'Housing', 'Safety']
 
