@@ -94,7 +94,7 @@ def domain(metadata):
     return metadata['ckan_extras']['domain']['value'] in CTDATA_DATASET_DOMAINS
 
 @pytest.fixture
-def dimension_group_list(metadata):
+def dimension_groups(metadata):
     return metadata['dimension_groups']
 
 @pytest.fixture
@@ -114,9 +114,9 @@ def dimensions(metadata):
 #     return list_of_combinations
 
 @pytest.fixture
-def dimension_combinations(dimension_group_list):
+def dimension_combinations(dimension_groups):
     list_of_combinations = []
-    flat_dimensions = [[val for key,val in i.items()] for i in dimension_group_list]
+    flat_dimensions = [[val for key,val in i.items()] for i in dimension_groups]
 
     for combination in flat_dimensions:
         combos = itertools.product(*[i for i in combination])

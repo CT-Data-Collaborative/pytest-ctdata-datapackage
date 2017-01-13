@@ -76,8 +76,9 @@ def test_dimension_group_list_setup(testdir, datapackage):
     """Test extraction of dimension groups as prerequisite for permutation test"""
 
     testdir.makepyfile("""
-        def test_dimension_group_list(dimension_group_list):
-            assert dimension_group_list[0] == ["English Language Learner", "Grade"]
+        def test_dimension_group_list(dimension_groups):
+            assert set(dimension_groups[0].keys()) == {"English Language Learner", "Grade"}
+            assert set(dimension_groups[1].keys()) == {"Students with Disabilities"}
     """)
 
     result = testdir.runpytest(
@@ -96,7 +97,7 @@ def test_dimension_permutations_dataset_one(testdir, datapackage):
 
     testdir.makepyfile("""
         def test_dimension_permutations(dimension_combinations):
-            assert len(dimension_combinations[0]) == 8
+            assert len(dimension_combinations) == 10
     """)
 
     result = testdir.runpytest(
@@ -114,7 +115,7 @@ def test_dimension_permutations_dataset_two(testdir, housing_datapackage):
 
     testdir.makepyfile("""
         def test_dimension_permutations(dimension_combinations):
-            assert len(dimension_combinations[0]) == 6
+            assert len(dimension_combinations) == 6
     """)
 
     result = testdir.runpytest(
