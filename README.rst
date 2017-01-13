@@ -129,7 +129,8 @@ Here is an example for how to specify a somewhat complex group of posssible comb
 .. code-block:: json
 
   {
-    "dimension_groups" : [
+    "dimension_groups" :
+      [
         {
             "Unit Type": ["Detached"],
             "Measure Type": ["Number", "Percent"],
@@ -173,7 +174,6 @@ Fixtures to add:
 * domain_subdomain - a boolean representing check that domain/subdomain combination is a valid value
 * units - a list of expected measurement types
 * default - a dict of the expected default settings for CKAN
-* variables - a list of expected variables in dataset - will need to specify disaggregation relationship
 
 Contributing
 ------------
