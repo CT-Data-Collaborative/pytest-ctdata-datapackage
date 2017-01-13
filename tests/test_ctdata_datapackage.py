@@ -23,8 +23,8 @@ def test_geography_extraction(testdir, datapackage):
     """Test geography extraction fixture"""
 
     testdir.makepyfile("""
-                def test_metadata_geography(_geography):
-                    assert _geography == 'Town'
+                def test_metadata_geography(geography):
+                    assert geography == 'Town'
             """)
     result = testdir.runpytest(
         '-v'
@@ -222,14 +222,18 @@ def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
     assert result.ret == 0
 
 
-dimension_group_list = [{
-        "Unit Type": ["Detached"],
-        "Measure Type": ["Number", "Percent"],
-        "Variable": ["Housing Units", "Margins of Error"]
-    },
-    {
-        "Unit Type": ["Total"],
-        "Measure Type": ["Number"],
-        "Variable": ["Housing Units", "Margins of Error"]
-    }
-    ]
+def test_row_counts(testdir, housing_datapackage, housing_datafile):
+
+    testdir.makepyfile("""
+                def test_dataset_row_counts(rowcount):
+                    assert rowcount.actual == rowcount.expected
+           """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_dataset_row_counts PASSED',
+    ])
+
+    assert result.ret == 0

@@ -30,7 +30,7 @@ Installation
 
 You can install "pytest-ctdata-datapackage" via `pip`_ from `Github`_::
 
-:bash:`$ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datapackage#egg=pytest-ctdata
+:code:`$ pip install -e git+https://github.com/CT-Data-Collaborative/pytest-ctdata-datapackage#egg=pytest-ctdata
 -datapackage`
 
 
@@ -69,12 +69,13 @@ disaggregation that is not uniformally available, we will communicate this by se
 Provided fixtures include:
 
 * metadata - a dict representing the parsed datapackage.json file
-* dataset - a list of dicts representing the parsed tidy data file
-* spotchecks - a list of lookup keys and expected value
 * geographies - a list of geographical entities present in data
 * domain - a boolean representing check that dataset domain is valid
 * years - a list of the years as specified in the metadata
-
+* dataset - a list of dicts representing the parsed tidy data file
+* spotchecks - a list of lookup keys and expected value
+* spotchec_results - a list of named tuples, each of which contain the test spec, the expected result and actual result
+* rowcount_reults - a named tuple with the expected row count and actual row count
 
 Metadata Schema
 ---------------
@@ -123,7 +124,25 @@ Sometimes the situation is more complex. Some factors can be hierarchical, while
 the case with education data. For example, data may be disaggregated by Sex and Race/Ethnicity with a separate
 disaggregation by grade.
 
-We can generalize this specification as follows in the YAML file.
+Here is an example for how to specify a somewhat complex group of posssible combinations:
+
+.. :code::json
+
+  "dimension_groups" : [
+    {
+        "Unit Type": ["Detached"],
+        "Measure Type": ["Number", "Percent"],
+        "Variable": ["Housing Units", "Margins of Error"]
+    },
+    {
+        "Unit Type": ["Total"],
+        "Measure Type": ["Number"],
+        "Variable": ["Housing Units", "Margins of Error"]
+    }
+  ]
+
+Rows that contain data on Detached Unit Type can be either Number or Percent Measure Types. However, Total Unit Type
+rows only contain Number Measure Type observations (Percents would all be 100%).
 
 First, we include a specification of each factor and the available levels.
 

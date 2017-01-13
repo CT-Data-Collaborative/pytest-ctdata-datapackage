@@ -3,7 +3,7 @@
 import csv
 import itertools
 import json
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 
 import pytest
 
@@ -17,7 +17,7 @@ SPOT_CHECK_CONVERTERS = {
 }
 
 Spotcheck = namedtuple("Spotcheck", ['spec', 'expected', 'actual'])
-
+RowCounts = namedtuple("Rowcount", ['expected', 'actual'])
 
 def helper_filter(item, conditions):
     for k,v in conditions:
@@ -26,7 +26,7 @@ def helper_filter(item, conditions):
     return True
 
 
-def _lookerupper(dataset, filter):
+def _lookerupper(dataset, filter, convertor):
     """Lookup function for spotchecks"""
     filters = [(k, v) for k, v in filter.items()]
     matches = [x for x in dataset if helper_filter(x, filters)]
@@ -38,20 +38,14 @@ def _lookerupper(dataset, filter):
         result = match['Value']
     except KeyError:
         return None
-    return result
-
-def _lookup_wrapper(dataset, filter, convertor):
-    lookup = _lookerupper(dataset, filter)
     try:
-        final_value = convertor(lookup)
+        final_value = convertor(result)
     except TypeError:
         final_value = None
     return final_value
 
 
-def nested_dict():
-   return defaultdict(nested_dict)
-
+# Fixtures related to metadata
 @pytest.fixture
 def metadata(request):
     """Load and parse the datapackage.json"""
@@ -77,7 +71,7 @@ def dataset(metadata):
         return [x for x in reader]
 
 @pytest.fixture
-def _geography(metadata):
+def geography(metadata):
     """Extract specified geography from datapackage.json"""
     try:
         return metadata['ckan_extras']['geography']['value']
@@ -85,9 +79,13 @@ def _geography(metadata):
         return ''
 
 @pytest.fixture
-def geographies(dataset, _geography):
+def geographies(dataset, geography):
     """Use metadata file to extract a set of unique towns from data file"""
-    return {x[_geography] for x in dataset}
+    return {x[geography] for x in dataset}
+
+@pytest.fixture
+def geography_units_count(metadata):
+    return metadata['ckan_extras']['expected_number_of_geographies']['value']
 
 @pytest.fixture
 def domain(metadata):
@@ -101,17 +99,6 @@ def dimension_groups(metadata):
 def dimensions(metadata):
     return metadata['resources'][0]['schema']['fields']
 
-# @pytest.fixture
-# def dimension_combinations(dimension_group_list, dimensions):
-#     list_of_combinations = []
-#     dimension_lookup = {d['name']: d for d in dimensions}
-#     flat_dimensions = [item for sublist in dimension_group_list for item in sublist]
-#     possible_dimension_values = {d: dimension_lookup[d]['constraints']['enum'] for d in flat_dimensions}
-#
-#     for combination in dimension_group_list:
-#         combos = list(itertools.product(*[possible_dimension_values[i] for i in combination]))
-#         list_of_combinations.append(combos)
-#     return list_of_combinations
 
 @pytest.fixture
 def dimension_combinations(dimension_groups):
@@ -141,19 +128,19 @@ def spotcheck_results(spotchecks, dataset):
         if check['expected']['type'] == '$match':
             expected_final_value = check['expected']['value']
         elif check['expected']['type'] == '$lookup':
-            expected_final_value = _lookup_wrapper(dataset, check['expected']['value'], convertor)
+            expected_final_value = _lookerupper(dataset, check['expected']['value'], convertor)
         else:
             expected_final_value = -1
 
         if check['type'] == "$lookup":
-            final_value = _lookup_wrapper(dataset, check['filter'], convertor)
+            final_value = _lookerupper(dataset, check['filter'], convertor)
         elif check['type'] == '$reduce':
-            final_value = sum([_lookup_wrapper(dataset, f, convertor) for f in check['filter']])
+            final_value = sum([_lookerupper(dataset, f, convertor) for f in check['filter']])
         elif check['type'] == '$percent':
             filter = check['filter']
             try:
-                numerator = _lookup_wrapper(dataset, filter['numerator'], convertor)
-                denominator = _lookup_wrapper(dataset, filter['denominator'], convertor)
+                numerator = _lookerupper(dataset, filter['numerator'], convertor)
+                denominator = _lookerupper(dataset, filter['denominator'], convertor)
             except KeyError:
                 final_value = None
             final_value = round(100*(numerator/denominator),1)
@@ -163,3 +150,11 @@ def spotcheck_results(spotchecks, dataset):
         check_result = Spotcheck(spec=check, expected=expected_final_value, actual=final_value)
         spotcheck_results.append(check_result)
     return spotcheck_results
+
+
+# TODO Hard coding the number of geos is bad.
+@pytest.fixture
+def rowcount(dataset, years, geography_units_count, dimension_combinations):
+    expected_row_count = len(years) * geography_units_count * len(dimension_combinations)
+    actual_row_count = len(dataset)
+    return RowCounts(expected=expected_row_count, actual=actual_row_count)

@@ -91,6 +91,11 @@ def datapackage(testdir):
                         "enum": ["Town", "County", "Town/County", "District", "Other"]
                     }
                 },
+                "expected_number_of_geographies": {
+                    "ckan_name": "Expected Number of Unique Geographies",
+                    "value": 2,
+                    "type": "string"
+                },
                 "domain": {
                     "ckan_name": "Domain",
                     "value": "Demographics",
@@ -220,6 +225,11 @@ def housing_datapackage(testdir):
                         "constraints": {
                             "enum": ["Town", "County", "Town/County", "District", "Other"]
                         }
+                    },
+                    "expected_number_of_geographies": {
+                        "ckan_name": "Expected Number of Unique Geographies",
+                        "value": 170,
+                        "type": "string"
                     },
                     "domain": {
                         "ckan_name": "Domain",
