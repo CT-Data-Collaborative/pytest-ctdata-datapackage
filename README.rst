@@ -126,20 +126,22 @@ disaggregation by grade.
 
 Here is an example for how to specify a somewhat complex group of posssible combinations:
 
-.. :code::json
+.. code-block:: json
 
-  "dimension_groups" : [
-    {
-        "Unit Type": ["Detached"],
-        "Measure Type": ["Number", "Percent"],
-        "Variable": ["Housing Units", "Margins of Error"]
-    },
-    {
-        "Unit Type": ["Total"],
-        "Measure Type": ["Number"],
-        "Variable": ["Housing Units", "Margins of Error"]
-    }
-  ]
+  {
+    "dimension_groups" : [
+        {
+            "Unit Type": ["Detached"],
+            "Measure Type": ["Number", "Percent"],
+            "Variable": ["Housing Units", "Margins of Error"]
+        },
+        {
+            "Unit Type": ["Total"],
+            "Measure Type": ["Number"],
+            "Variable": ["Housing Units", "Margins of Error"]
+        }
+      ]
+  }
 
 Rows that contain data on Detached Unit Type can be either Number or Percent Measure Types. However, Total Unit Type
 rows only contain Number Measure Type observations (Percents would all be 100%).
