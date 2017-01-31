@@ -169,12 +169,6 @@ def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
     testdir.makepyfile("""
             import pytest
 
-            def helper_filter(item, conditions):
-                for k,v in conditions:
-                    if item[k] != v:
-                        return False
-                return True
-
             def test_spotcheck_testing(spotcheck_results):
                 for check in spotcheck_results:
                     assert check.expected == check.actual
