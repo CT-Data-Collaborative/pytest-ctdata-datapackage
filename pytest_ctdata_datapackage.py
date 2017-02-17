@@ -7,7 +7,17 @@ from collections import namedtuple
 
 import pytest
 
-CTDATA_DATASET_DOMAINS = ['Civic Vitality', 'Demographics', 'Economy', 'Education', 'Health', 'Housing', 'Safety']
+CTDATA_DATASET_DOMAINS = {
+    'Civic Vitality': ['Engagement', 'Public Finance'],
+    'Demographics': ['Births', 'Characteristics', 'Family Structure', 'Population'],
+    'Economy': ['Commuting', 'Employment', 'Income', 'Poverty', 'Social Assistance'],
+    'Education': ['Early Care and Education', 'Educational Attainment', 'Kindergarten Readiness',
+                  'Student Behavior', 'Student Demographics', 'Testing and Evaluation'],
+    'Health': ['Chronic Disease', 'Early Childhood Development', 'Health Care Access and Insurance',
+               'Health Outcomes', 'Mental Health', 'Mortality', 'Substance Abuse'],
+    'Housing': ['Household Characteristics', 'Housing Characteristics', 'Residential Mobility'],
+    'Safety': ['Child Welfare', 'Public Safety']
+}
 
 
 SPOT_CHECK_CONVERTERS = {
@@ -88,10 +98,6 @@ def geography_units_count(metadata):
     return metadata['ckan_extras']['expected_number_of_geographies']['value']
 
 @pytest.fixture
-def domain(metadata):
-    return metadata['ckan_extras']['domain']['value'] in CTDATA_DATASET_DOMAINS
-
-@pytest.fixture
 def dimension_groups(metadata):
     return metadata['dimension_groups']
 
@@ -158,3 +164,16 @@ def rowcount(dataset, years, geography_units_count, dimension_combinations):
     expected_row_count = len(years) * geography_units_count * len(dimension_combinations)
     actual_row_count = len(dataset)
     return RowCounts(expected=expected_row_count, actual=actual_row_count)
+
+
+@pytest.fixture
+def domain(metadata):
+    return metadata['ckan_extras']['domain']['value']
+
+@pytest.fixture
+def subdomain(metadata):
+    return metadata['ckan_extras']['subdomain']['value']
+
+@pytest.fixture
+def domain_map():
+    return CTDATA_DATASET_DOMAINS

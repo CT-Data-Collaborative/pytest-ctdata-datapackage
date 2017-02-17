@@ -162,7 +162,7 @@ def housing_datapackage(testdir):
                 "title": "Single Housing Units",
                 "description": "Single Housing Units reports the number and percent of housing units that are single, detached units.",
                 "sources": [{
-                    "name": "US Census American Community Survey",
+                    "name": "uscensus",
                     "web": ""
                 }],
                 "resources": [{
@@ -233,7 +233,12 @@ def housing_datapackage(testdir):
                     },
                     "domain": {
                         "ckan_name": "Domain",
-                        "value": "Demographics",
+                        "value": "Housing",
+                        "type": "string"
+                    },
+                    "subdomain": {
+                        "ckan_name": "Subdomain",
+                        "value": "Housing Characteristics",
                         "type": "string"
                     },
                     "years_in_catalog": {

@@ -36,23 +36,6 @@ def test_geography_extraction(testdir, datapackage):
     assert result.ret == 0
 
 
-def test_metadata_domain_extract(testdir, datapackage):
-    """Test domain extraction fixture"""
-
-    testdir.makepyfile("""
-        def test_metadata_domain(domain):
-            assert domain
-    """)
-
-    result = testdir.runpytest(
-        '-v'
-    )
-    result.stdout.fnmatch_lines([
-        '*::test_metadata_domain PASSED',
-    ])
-
-    assert result.ret == 0
-
 
 def test_years_extract(testdir, datapackage):
     """Test years extraction fixture"""
@@ -150,9 +133,9 @@ def test_spotcheck_fixture(testdir, datapackage):
 def test_datafile_load(testdir, datapackage, datafile):
 
     testdir.makepyfile("""
-            def test_datafile_load(dataset):
-                assert len(dataset) == 2
-        """)
+        def test_datafile_load(dataset):
+            assert len(dataset) == 2
+    """)
 
     result = testdir.runpytest(
         '-v'
@@ -167,12 +150,12 @@ def test_datafile_load(testdir, datapackage, datafile):
 def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
 
     testdir.makepyfile("""
-            import pytest
+        import pytest
 
-            def test_spotcheck_testing(spotcheck_results):
-                for check in spotcheck_results:
-                    assert check.expected == check.actual
-       """)
+        def test_spotcheck_testing(spotcheck_results):
+            for check in spotcheck_results:
+                assert check.expected == check.actual
+    """)
 
     result = testdir.runpytest(
         '-v'
@@ -187,24 +170,24 @@ def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
 def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
 
     testdir.makepyfile("""
-                import pytest
-                import datapackage
+        import pytest
+        import datapackage
 
-                def helper_filter(item, conditions):
-                    for k,v in conditions:
-                        if item[k] != v:
-                            return False
-                    return True
+        def helper_filter(item, conditions):
+            for k,v in conditions:
+                if item[k] != v:
+                    return False
+            return True
 
-                @pytest.fixture
-                def towns():
-                    dp = datapackage.DataPackage(
-                        'https://raw.githubusercontent.com/CT-Data-Collaborative/ct-town-list/master/datapackage.json')
-                    return dp.resources[0].data
+        @pytest.fixture
+        def towns():
+            dp = datapackage.DataPackage(
+                'https://raw.githubusercontent.com/CT-Data-Collaborative/ct-town-list/master/datapackage.json')
+            return dp.resources[0].data
 
-                def test_geoes_are_valid_towns(towns, geographies):
-                    assert set(geographies) == set([x['Town'] for x in towns])
-           """)
+        def test_geoes_are_valid_towns(towns, geographies):
+            assert set(geographies) == set([x['Town'] for x in towns])
+   """)
 
     result = testdir.runpytest(
         '-v'
@@ -219,15 +202,59 @@ def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
 def test_row_counts(testdir, housing_datapackage, housing_datafile):
 
     testdir.makepyfile("""
-                def test_dataset_row_counts(rowcount):
-                    assert rowcount.actual == rowcount.expected
-           """)
+        def test_dataset_row_counts(rowcount):
+            assert rowcount.actual == rowcount.expected
+        """)
 
-    result = testdir.runpytest(
-        '-v'
-    )
+    result = testdir.runpytest('-v')
+
     result.stdout.fnmatch_lines([
         '*::test_dataset_row_counts PASSED',
     ])
+
+    assert result.ret == 0
+
+
+def test_domain(testdir, housing_datapackage):
+
+    testdir.makepyfile("""
+        def test_domain(domain):
+            assert domain == 'Housing'
+        """)
+
+    result = testdir.runpytest('-v')
+
+    result.stdout.fnmatch_lines([
+        '*::test_domain PASSED',
+    ])
+
+    assert result.ret == 0
+
+
+def test_subdomain(testdir, housing_datapackage):
+
+    testdir.makepyfile("""
+        def test_subdomain(subdomain):
+            assert subdomain == 'Housing Characteristics'
+        """)
+
+    result = testdir.runpytest('-v')
+
+    result.stdout.fnmatch_lines([
+        '*::test_subdomain PASSED',
+    ])
+
+    assert result.ret == 0
+
+
+def test_domain_subdomain_validation(testdir, housing_datapackage):
+    testdir.makepyfile("""
+        def test_domain_subdomain_validation(domain_map, domain, subdomain):
+            assert domain in domain_map
+            assert subdomain in domain_map[domain]
+    """)
+
+    result = testdir.runpytest('-v')
+    result.stdout.fnmatch_lines(['*::test_domain_subdomain_validation PASSED',])
 
     assert result.ret == 0
