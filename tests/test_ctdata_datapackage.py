@@ -271,3 +271,30 @@ def test_source_validation(testdir, housing_datapackage):
     result.stdout.fnmatch_lines(['*::test_source_validation PASSED',])
 
     assert result.ret == 0
+
+
+
+def test_schema_validate(testdir, housing_datapackage):
+    testdir.makepyfile("""
+        def test_schema_validation(schema):
+            dimensions = [s for s in schema if s['dimension']]
+            for d in dimensions:
+                assert isinstance(d["constraints"]["enum"], list)
+    """)
+
+    result = testdir.runpytest('-v')
+    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED',])
+
+    assert result.ret == 0
+
+
+def test_schema_validate_2(testdir, housing_datapackage):
+    testdir.makepyfile("""
+        def test_schema_validation(schema_test):
+            assert schema_test
+    """)
+
+    result = testdir.runpytest('-v')
+    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED',])
+
+    assert result.ret == 0

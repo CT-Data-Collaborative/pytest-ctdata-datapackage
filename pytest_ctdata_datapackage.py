@@ -187,3 +187,17 @@ def source_options():
 @pytest.fixture
 def source(metadata):
     return metadata['sources']
+
+
+@pytest.fixture
+def schema(metadata):
+    return metadata['resources'][0]['schema']['fields']
+
+
+@pytest.fixture
+def schema_test(schema):
+    dimensions = [s for s in schema if s['dimension']]
+    for d in dimensions:
+        if not isinstance(d["constraints"]["enum"], list):
+            return False
+    return True
