@@ -258,3 +258,16 @@ def test_domain_subdomain_validation(testdir, housing_datapackage):
     result.stdout.fnmatch_lines(['*::test_domain_subdomain_validation PASSED',])
 
     assert result.ret == 0
+
+
+def test_source_validation(testdir, housing_datapackage):
+    testdir.makepyfile("""
+        def test_source_validation(source_options, source):
+            for s in source:
+                assert s['name'] in source_options
+    """)
+
+    result = testdir.runpytest('-v')
+    result.stdout.fnmatch_lines(['*::test_source_validation PASSED',])
+
+    assert result.ret == 0

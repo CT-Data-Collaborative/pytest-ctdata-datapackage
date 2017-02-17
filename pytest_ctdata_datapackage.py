@@ -19,6 +19,8 @@ CTDATA_DATASET_DOMAINS = {
     'Safety': ['Child Welfare', 'Public Safety']
 }
 
+SOURCES = ["uscensus", "ctsde", "ctdph", "ctopm", "samhsa", "ctdmhas", "municipalities", "ctdss", "ctdol", "ctdecd",
+        "ctdcf", "ctocme", "ctoec", "ctdespp", "seda", "ctlib", "cthfa", "ctdot", "ctdoh"]
 
 SPOT_CHECK_CONVERTERS = {
     "float": float,
@@ -177,3 +179,11 @@ def subdomain(metadata):
 @pytest.fixture
 def domain_map():
     return CTDATA_DATASET_DOMAINS
+
+@pytest.fixture
+def source_options():
+    return SOURCES
+
+@pytest.fixture
+def source(metadata):
+    return metadata['sources']
