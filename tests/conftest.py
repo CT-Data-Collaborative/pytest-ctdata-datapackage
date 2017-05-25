@@ -8,6 +8,7 @@ def datafile(testdir):
     Town,FIPS,Year,Grade,English Language Learner,Students with Disabilities,Measure Type,Variable,Value
     Ansonia,"0901",2016,K through 3,English Language Learner,All,Number,Students,10
     Andover,"0902",2015,All,All,With disabilities,Number,Students,1
+    Ansonia,"0901",2016,K through 3,English Language Learner,All,Text,Rating,B
     """)
 
 
@@ -131,6 +132,22 @@ def datapackage(testdir):
                   "type": "$match",
                   "number type": "int",
                   "value": 10
+                }
+              },
+              {
+                "type": "$lookup",
+                "filter": {
+                  "Town": "Ansonia",
+                  "Year": "2016",
+                  "Grade": "K through 3",
+                  "English Language Learner": "English Language Learner",
+                  "Students with Disabilities": "All",
+                  "Measure Type": "Text"
+                },
+                "expected": {
+                  "type": "$match",
+                  "number type": "string",
+                  "value": "B"
                 }
               },
               {

@@ -10,7 +10,6 @@ def test_datapackagejson_parse(testdir, datapackage):
                assert metadata['name'] == 'children-by-family-type'
        """)
 
-
     result = testdir.runpytest(
         '-v'
     )
@@ -34,7 +33,6 @@ def test_geography_extraction(testdir, datapackage):
     ])
 
     assert result.ret == 0
-
 
 
 def test_years_extract(testdir, datapackage):
@@ -77,7 +75,6 @@ def test_dimension_group_list_setup(testdir, datapackage):
 def test_dimension_permutations_dataset_one(testdir, datapackage):
     """Confirm that pytest can correctly use fixture to load yaml"""
 
-
     testdir.makepyfile("""
         def test_dimension_permutations(dimension_combinations):
             assert len(dimension_combinations) == 10
@@ -92,9 +89,9 @@ def test_dimension_permutations_dataset_one(testdir, datapackage):
 
     assert result.ret == 0
 
+
 def test_dimension_permutations_dataset_two(testdir, housing_datapackage):
     """Confirm that pytest can correctly use fixture to load yaml"""
-
 
     testdir.makepyfile("""
         def test_dimension_permutations(dimension_combinations):
@@ -111,14 +108,12 @@ def test_dimension_permutations_dataset_two(testdir, housing_datapackage):
     assert result.ret == 0
 
 
-
 def test_spotcheck_fixture(testdir, datapackage):
     """Test extraction of spotchecks from datapackage"""
 
-
     testdir.makepyfile("""
         def test_spotcheck_fixture(spotchecks):
-            assert len(spotchecks) == 2
+            assert len(spotchecks) == 3
     """)
 
     result = testdir.runpytest(
@@ -130,11 +125,11 @@ def test_spotcheck_fixture(testdir, datapackage):
 
     assert result.ret == 0
 
-def test_datafile_load(testdir, datapackage, datafile):
 
+def test_datafile_load(testdir, datapackage, datafile):
     testdir.makepyfile("""
         def test_datafile_load(dataset):
-            assert len(dataset) == 2
+            assert len(dataset) == 3
     """)
 
     result = testdir.runpytest(
@@ -147,8 +142,25 @@ def test_datafile_load(testdir, datapackage, datafile):
     assert result.ret == 0
 
 
-def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
+def test_housing_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
+    testdir.makepyfile("""
+        import pytest
 
+        def test_spotcheck_testing(spotcheck_results):
+            for check in spotcheck_results:
+                assert check.expected == check.actual
+    """)
+
+    result = testdir.runpytest(
+        '-v'
+    )
+    result.stdout.fnmatch_lines([
+        '*::test_spotcheck_testing PASSED',
+    ])
+
+    assert result.ret == 0
+
+def test_spotcheck_lookups(testdir, datapackage, datafile):
     testdir.makepyfile("""
         import pytest
 
@@ -168,7 +180,6 @@ def test_spotcheck_lookups(testdir, housing_datapackage, housing_datafile):
 
 
 def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
-
     testdir.makepyfile("""
         import pytest
         import datapackage
@@ -200,7 +211,6 @@ def test_geoes_are_valid_towns(testdir, housing_datapackage, housing_datafile):
 
 
 def test_row_counts(testdir, housing_datapackage, housing_datafile):
-
     testdir.makepyfile("""
         def test_dataset_row_counts(rowcount):
             assert rowcount.actual == rowcount.expected
@@ -216,7 +226,6 @@ def test_row_counts(testdir, housing_datapackage, housing_datafile):
 
 
 def test_domain(testdir, housing_datapackage):
-
     testdir.makepyfile("""
         def test_domain(domain):
             assert domain == 'Housing'
@@ -232,7 +241,6 @@ def test_domain(testdir, housing_datapackage):
 
 
 def test_subdomain(testdir, housing_datapackage):
-
     testdir.makepyfile("""
         def test_subdomain(subdomain):
             assert subdomain == 'Housing Characteristics'
@@ -255,7 +263,7 @@ def test_domain_subdomain_validation(testdir, housing_datapackage):
     """)
 
     result = testdir.runpytest('-v')
-    result.stdout.fnmatch_lines(['*::test_domain_subdomain_validation PASSED',])
+    result.stdout.fnmatch_lines(['*::test_domain_subdomain_validation PASSED', ])
 
     assert result.ret == 0
 
@@ -268,10 +276,9 @@ def test_source_validation(testdir, housing_datapackage):
     """)
 
     result = testdir.runpytest('-v')
-    result.stdout.fnmatch_lines(['*::test_source_validation PASSED',])
+    result.stdout.fnmatch_lines(['*::test_source_validation PASSED', ])
 
     assert result.ret == 0
-
 
 
 def test_schema_validate(testdir, housing_datapackage):
@@ -283,7 +290,7 @@ def test_schema_validate(testdir, housing_datapackage):
     """)
 
     result = testdir.runpytest('-v')
-    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED',])
+    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED', ])
 
     assert result.ret == 0
 
@@ -295,6 +302,6 @@ def test_schema_validate_2(testdir, housing_datapackage):
     """)
 
     result = testdir.runpytest('-v')
-    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED',])
+    result.stdout.fnmatch_lines(['*::test_schema_validation PASSED', ])
 
     assert result.ret == 0

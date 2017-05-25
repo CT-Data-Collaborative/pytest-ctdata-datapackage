@@ -25,7 +25,9 @@ SOURCES = ["uscensus", "ctsde", "ctdph", "ctopm", "samhsa", "ctdmhas", "municipa
 SPOT_CHECK_CONVERTERS = {
     "float": float,
     "int": int,
-    "percent": lambda x: round(x*100,1)
+    "percent": lambda x: round(x*100,1),
+    "string": str,
+    "text": str
 }
 
 Spotcheck = namedtuple("Spotcheck", ['spec', 'expected', 'actual'])
